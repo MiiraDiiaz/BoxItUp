@@ -1,0 +1,117 @@
+﻿version: "3.8"
+
+services:
+# Микросервисы
+   authapi:
+     container_name: auth-Api
+     build:
+        context: .
+        dockerfile: Auth.Api/Dockerfile
+     ports:
+        - "5000:5000"
+     environment:
+        DB_HOST: postgres
+        DB_PORT: 5432
+        DB_NAME: authServiceDb
+        DB_USER: postgres
+        DB_PASS: 8n5nb7mf
+     depends_on:
+      - "postgres"
+     networks:
+        - boxitup-network
+
+   boxapi:
+      container_name: box-Api
+      build:
+         context: .
+         dockerfile: Box.Api/Dockerfile
+      ports:
+         - "5001:5001"
+      environment:
+         ConnectionStrings__SqlServer: "Server=sqlserver;Database=boxServiceDb;User ID=sa;Password=3y!7j69_s;TrustServerCertificate=True;"
+      depends_on:
+      - "sqlserver"
+      networks:
+         - boxitup-network
+
+# Брокер сообщений
+   rabbitmq:
+     image: rabbitmq:3.12-management
+     container_name: rabbitmq
+     hostname: rabbitmq
+     environment:
+       RABBITMQ_DEFAULT_USER: "admin"     
+       RABBITMQ_DEFAULT_PASS: "admin12345" 
+       RABBITMQ_DEFAULT_VHOST: "/"        
+     ports:
+      - "5672:5672"   
+      - "15672:15672" 
+     volumes:
+       - rabbitmq_data:/var/lib/rabbitmq
+     networks:
+      - boxitup-network 
+
+# Базы данных 
+   postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      LANG: en_US.utf8
+      LC_ALL: en_US.utf8
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 8n5nb7mf
+      POSTGRES_DB: authServiceDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks:
+      - boxitup-network
+    command: ["postgres", "-c", "listen_addresses=*"]
+
+   sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "3y!7j69_s"
+      MSSQL_PID: "Express"
+    ports:
+     - "1433:1433"
+    volumes:
+     - sqlserver_data:/var/opt/mssql
+     - ./sqlserver/init:/docker-entrypoint-initdb.d
+    networks:
+     - boxitup-network
+
+# Админ-панели для БД        
+   pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: miiradiiaz@gmail.com 
+      PGADMIN_DEFAULT_PASSWORD: DiazMD9119          
+    ports:
+      - "5050:80"  
+    networks:
+      - boxitup-network
+    depends_on:
+      - "postgres"
+
+   adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - "8080:8080"
+    networks:
+      - boxitup-network
+    depends_on:
+      - "sqlserver"
+
+volumes:
+  pg-data:
+  sqlserver_data:
+  rabbitmq_data:
+
+networks:
+  boxitup-network: 
+    driver: bridge  

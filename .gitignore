@@ -1,0 +1,70 @@
+# Исключить общие файлы ОС и редакторов
+.DS_Store
+Thumbs.db
+*.lnk
+
+# Результаты сборки Visual Studio
+[Bb]in/
+[Oo]bj/
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# Файлы пользовательских настроек
+*.user
+*.userosscache
+*.sln.docstates
+
+# Файлы кэша и состояния IDE
+.vs/
+.vscode/
+*.suo
+*.cache
+*.ilk
+*.pdb
+*.ncb
+*.opensdf
+*.sdf
+*.log
+
+# NuGet пакеты и кэш
+[Nn]u[Pp]ackages/
+*.nupkg
+packages/
+nuget.exe
+
+# Резервные копии и временные файлы
+*.bak
+*.tmp
+*.swp
+
+# Файлы ReSharper и Rider
+_ReSharper*/
+*.rs.user
+*.sln.ide
+
+# Файлы проектов Azure
+*.azurepubxml
+
+# Файлы публикации
+pubxml
+*.pubxml
+*.publishproj
+
+# Исключить авто-генерируемые файлы
+*.autogen.cs
+
+# Файлы MSTest
+*.Test.xml
+
+# Файлы Coverage
+coverage*.json
+coverage*.xml
+*.coverage
+
+# Файлы пакетов
+**/packages/*
+!**/packages/repositories.config
+
+# Файлы Docker
+docker-compose.*.yml
+docker-compose.override.yml
